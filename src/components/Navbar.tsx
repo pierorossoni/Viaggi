@@ -1,12 +1,24 @@
 import React from 'react';
-import { Link, useLocation } from 'react-router-dom';
-import { Plane, Hotel, Home } from 'lucide-react';
+import { Link, useLocation, useNavigate } from 'react-router-dom';
+import { Plane, Hotel, Home, LogOut } from 'lucide-react';
+import { supabase } from '../lib/supabase';
 
 function Navbar() {
   const location = useLocation();
+  const navigate = useNavigate();
   
   const isActive = (path: string) => location.pathname === path;
   
+  const handleLogout = async () => {
+    try {
+      const { error } = await supabase.auth.signOut();
+      if (error) throw error;
+      navigate('/login');
+    } catch (error) {
+      console.error('Error logging out:', error);
+    }
+  };
+
   return (
     <nav className="bg-white shadow-lg">
       <div className="container mx-auto px-4">
@@ -40,6 +52,13 @@ function Navbar() {
               <span>Alberghi</span>
             </Link>
           </div>
+          <button
+            onClick={handleLogout}
+            className="flex items-center space-x-2 px-3 py-2 rounded-md text-sm font-medium text-red-600 hover:text-red-800 hover:bg-red-50"
+          >
+            <LogOut size={20} />
+            <span>Logout</span>
+          </button>
         </div>
       </div>
     </nav>
